@@ -1,0 +1,6 @@
+Revision history for Perl extension Chess::Games::DotCom.
+
+0.01  Wed Sep 17 15:19:42 2003
+	- original version; created by h2xs 1.22 with options
+		-b 5.6.1 -A -X -n Chess::Games::DotCom
+
