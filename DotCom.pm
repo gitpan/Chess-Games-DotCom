@@ -30,7 +30,7 @@ our @EXPORT = qw(
 	game_of_day puzzle_of_day
 );
 
-our $VERSION = '0.09';
+our $VERSION = '1.0';
 
 our $home = 'http://www.chessgames.com';
 my  $tb   = HTML::TreeBuilder->new;
