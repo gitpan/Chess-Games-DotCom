@@ -5,6 +5,7 @@ use strict;
 use warnings;
 
 use Data::Dumper;
+use HTML::Entities;
 use HTML::TreeBuilder;
 use LWP::Simple;
 
@@ -29,7 +30,7 @@ our @EXPORT = qw(
 	game_of_day puzzle_of_day
 );
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 our $home = 'http://www.chessgames.com';
 my  $tb   = HTML::TreeBuilder->new;
@@ -189,11 +190,13 @@ sub puzzle_of_day {
     my $winner = $table->look_down
       (
        '_tag' => '~text',
-       'text' => qr/to play and win/
+       'text' => qr/^\d+/
       );
        
 
     my $winner_content = $winner->attr('text');
+
+    decode_entities($winner_content);
 
 #    die $winner_content;
 
@@ -264,6 +267,16 @@ C<game_of_day>
 C<puzzle_of_day>
 
 =head1 NEW FEATURES
+
+=head2 in 0.09
+
+Realized that I parsed out the wrong thing and parsed out something like:
+
+   12. ...?
+
+instead.
+
+Stored this in plycount instead.
 
 =head2 in 0.08
 
