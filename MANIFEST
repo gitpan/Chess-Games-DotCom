@@ -3,4 +3,6 @@ DotCom.pm
 Makefile.PL
 MANIFEST
 README
+scripts/chessgames-dotcom
 t/1.t
+META.yml                                Module meta-data (added by MakeMaker)

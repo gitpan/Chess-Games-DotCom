@@ -29,7 +29,7 @@ our @EXPORT = qw(
 	game_of_day
 );
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 our $home = 'http://www.chessgames.com';
 my  $tb   = HTML::TreeBuilder->new;
