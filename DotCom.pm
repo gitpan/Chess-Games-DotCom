@@ -29,7 +29,7 @@ our @EXPORT = qw(
 	game_of_day puzzle_of_day
 );
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 our $home = 'http://www.chessgames.com';
 my  $tb   = HTML::TreeBuilder->new;
@@ -176,7 +176,7 @@ sub puzzle_of_day {
        text   => 'See game for solution.'
       );
 
-    warn $G->as_HTML;
+#    warn $G->as_HTML;
 
     # find _all_ tr in the lineage of the found node... I don't know a 
     # way to limit the search
@@ -185,7 +185,7 @@ sub puzzle_of_day {
        '_tag' => 'table',
       );
 
-    print $table->as_HTML;
+ #   print $table->as_HTML;
 
 
     my $A = $table->look_down
@@ -194,7 +194,7 @@ sub puzzle_of_day {
       );
 
 
-    $A->dump;
+#    $A->dump;
 
     my $game_url = $A->attr('href');
 
@@ -252,6 +252,10 @@ C<puzzle_of_day>
 
 =head1 NEW FEATURES
 
+=head2 in 0.07
+
+Added a sample cron file for daily automatic retrieval of puzzle of day.
+
 =head2 in 0.06
 
 C<puzzle_of_day> was added
@@ -284,9 +288,19 @@ You must have the following installed:
 
 =item 3 HTML::Tree
 
+=back
+
+=head2 Optional
+
+For the script in the C<scripts> directory, you also need:
+
+=over 4
+
 =item 4 File::Butler
 
 =item 5 File::Temp
+
+=item 6 Log::Agent
 
 =cut
 
