@@ -1,5 +1,13 @@
 2003-12-02  U-MOKSHA\metaperl  <metaperl@urth.org>
 
+	* Switched Changes file to ChangeLog so it is easier to find in
+	emacs
+
+	Actually got the potd script (below) to work on Cygwin. Winboard
+	uses Windows-style paths so absolute paths in Cygwin don't work
+	properly. Solution was to cd to the directory and use a relative
+	path. 
+
 	* Added $DIST/scripts/potd so that one can easily view the latest
 	puzzle of the day game via winboard. Uploaded as version 1.0.
 
