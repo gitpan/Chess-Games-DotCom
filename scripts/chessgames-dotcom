@@ -1,6 +1,6 @@
 #!/bin/bash -x
 
-$game_file=$HOME/chess/gameofday.pgn
+game_file=$HOME/chess/gameofday.pgn
 
 perl -MChess::Games::DotCom -e game_of_day
 cat game_of_day.pgn >> $game_file
