@@ -7,7 +7,8 @@ WriteMakefile(
     'VERSION_FROM'	=> 'DotCom.pm', # finds $VERSION
     'PREREQ_PM'		=> 
 	      {
-	       LWP => 5.69,
+		  'URI' => 1.10,
+	       'Bundle::LWP' => 0.01,
 	       HTML::Tree => 3.18
 	      }, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005

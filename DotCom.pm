@@ -29,7 +29,7 @@ our @EXPORT = qw(
 	game_of_day
 );
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 our $home = 'http://www.chessgames.com';
 my  $tb   = HTML::TreeBuilder->new;
@@ -184,6 +184,24 @@ The Perl Chess Mailing List:
 
 T. M. Brannon, <tbone@cpan.org>
 
+
+=head1 INSTALLATION
+
+You must have the following installed:
+
+=over 4
+
+=item 1 L<URI>
+
+=item 2 L<Bundle::LWP>
+
+=item 3 L<HTML::Tree>
+
+=cut
+
+I had serious problems using L<CPANPLUS> to install these, so you will 
+probably have to install each manually before downloading and installing 
+this.
 
 =head1 COPYRIGHT AND LICENSE
 
