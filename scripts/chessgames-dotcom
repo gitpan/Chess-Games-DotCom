@@ -1,6 +1,65 @@
-#!/bin/bash -x
+#!/usr/bin/perl
 
-game_file=$HOME/chess/gameofday.pgn
+use strict;
+use Chess::Games::DotCom;
+use File::Butler;
+use File::Temp qw/ tempfile / ;
 
-perl -MChess::Games::DotCom -e game_of_day
-cat game_of_day.pgn >> $game_file
+# Where the PGN files for game of day and puzzle of day are kept
+my $PGN_DIR = "$ENV{HOME}/chess";
+
+
+my %sub = 
+  (
+   pod => 'puzzle_of_day',
+   god => 'game_of_day'
+  );
+
+# The names of the permanent files as a function of the input
+# command-line parameter
+
+my %perm_file = map {
+  ($_ => "$PGN_DIR/$sub{$_}.pgn")
+} (keys %sub);
+
+
+# Start of Code
+
+sub usage {
+
+    "
+This script returns the 
+   Game   of Day (god) or
+   Puzzle of Day (pod).
+
+    USAGE: $0 (pod|god)
+
+";
+
+}
+
+my $podgod = shift or die usage;
+
+$podgod =~ /^(p|g)od$/ or die usage;
+
+#my ($fh, $tempfile) = tempfile ( $podgod . "XXXX" , SUFFIX => '.pgn' );
+#close $fh;
+
+my $tempfile = 'tempfile.pgn';
+
+no strict 'refs';
+my $SUB = $sub{$podgod};
+
+$SUB->($tempfile);
+
+# Create the perm file name
+
+my $perm_file = $perm_file{$podgod};
+
+#die "$perm_file FROM $tempfile";
+
+open T, $tempfile or die $!;
+
+my @T = <T>;
+
+Butler($perm_file, 'prepend', \@T) or die $!;

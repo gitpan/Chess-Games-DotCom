@@ -26,10 +26,10 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
 our @EXPORT = qw(
-	game_of_day
+	game_of_day puzzle_of_day
 );
 
-our $VERSION = '0.04';
+our $VERSION = '0.06';
 
 our $home = 'http://www.chessgames.com';
 my  $tb   = HTML::TreeBuilder->new;
@@ -72,6 +72,12 @@ sub _get
     return $response->is_success ? $response->content : undef;
 }
 
+sub pgn_url {
+
+  my $gid = shift;
+
+  "http://www.chessgames.com/perl/nph-chesspgndownload?gid=$gid"
+}
 
 sub game_of_day {
 
@@ -132,7 +138,71 @@ sub game_of_day {
     my ($game_id) = $game_url =~ m/(\d+)/;
 
     # let's get the game, faking out the web spider filter in the process:
-    my $pgn       = _get "http://www.chessgames.com/perl/nph-chesspgndownload?gid=$game_id";
+    my $pgn       = _get pgn_url $game_id;
+
+    # let's save it to disk
+    open F, ">$outfile" or die "error opening $outfile for writing: $!";
+    print F $pgn;
+    close(F)
+    
+}
+
+sub puzzle_of_day {
+
+    my $outfile = shift || "puzzle_of_day.pgn";
+
+#    warn $outfile;
+
+
+    # retrieve http://www.chessgames.com
+
+    my $html = get $home;
+
+    # parse the page
+
+    $tb->parse($html);
+
+    my $pod; # god == Game of the Day
+
+    # make it so that text nodes are changed into nodes with tags
+    # just like any other HTML aspect.
+    # then they can be searched with look_down
+    $tb->objectify_text;
+
+    # Find the place in the HTML where Game of the Day is
+    my $G = $tb->look_down
+      (
+       '_tag' => '~text',
+       text   => 'See game for solution.'
+      );
+
+    warn $G->as_HTML;
+
+    # find _all_ tr in the lineage of the found node... I don't know a 
+    # way to limit the search
+    my $table = $G->look_up
+      (
+       '_tag' => 'table',
+      );
+
+    print $table->as_HTML;
+
+
+    my $A = $table->look_down
+      (
+       '_tag' => 'a',
+      );
+
+
+    $A->dump;
+
+    my $game_url = $A->attr('href');
+
+    my ($game_id) = $game_url =~ m/(\d+)/;
+  
+
+    # let's get the game, faking out the web spider filter in the process:
+    my $pgn       = _get pgn_url $game_id;
 
     # let's save it to disk
     open F, ">$outfile" or die "error opening $outfile for writing: $!";
@@ -154,9 +224,14 @@ Chess::Games::DotCom - API for accessing chessgames.com
   shell> perl -MChess::Games::DotCom -e  game_of_day
   shell> perl -MChess::Games::DotCom -e 'game_of_day("myfile.pgn")'
 
+  shell> perl -MChess::Games::DotCom -e  puzzle_of_day
+  shell> perl -MChess::Games::DotCom -e 'puzzle_of_day("myfile.pgn")'
+
 =head1 ABSTRACT
 
 Download games from chessgames.com.
+
+A script in scripts suitable for invocation from cron is included.
 
 =head1 API
 
@@ -165,9 +240,21 @@ Download games from chessgames.com.
 Downloads the game of the day. If C<$filename> is not specified, then
 it downloads it to C<game_of_day.pgn>.
 
+=head2 puzzle_of_day [ $filename ]
+
+Downloads the puzzle of the day. If C<$filename> is not specified, then
+it downloads it to C<puzzle_of_day.pgn>.
+
 =head2 EXPORT
 
 C<game_of_day>
+C<puzzle_of_day>
+
+=head1 NEW FEATURES
+
+=head2 in 0.06
+
+C<puzzle_of_day> was added
 
 
 =head1 TODO
@@ -191,17 +278,17 @@ You must have the following installed:
 
 =over 4
 
-=item 1 L<URI>
+=item 1 URI
 
-=item 2 L<Bundle::LWP>
+=item 2 Bundle::LWP
 
-=item 3 L<HTML::Tree>
+=item 3 HTML::Tree
+
+=item 4 File::Butler
+
+=item 5 File::Temp
 
 =cut
-
-I had serious problems using L<CPANPLUS> to install these, so you will 
-probably have to install each manually before downloading and installing 
-this.
 
 =head1 COPYRIGHT AND LICENSE
 
