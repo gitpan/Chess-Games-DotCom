@@ -30,7 +30,7 @@ our @EXPORT = qw(
 	game_of_day puzzle_of_day
 );
 
-our $VERSION = '1.1';
+our $VERSION = '1.2';
 
 our $home = 'http://www.chessgames.com';
 my  $tb   = HTML::TreeBuilder->new;
@@ -106,36 +106,19 @@ sub game_of_day {
        text   => 'Game of the Day'
       );
 
-    # warn $G->as_HTML;
-
-    # find _all_ tr in the lineage of the found node... I don't know a 
-    # way to limit the search
-    my @U = $G->look_up
+    my $table = $G->look_up
       (
-       '_tag' => 'tr',
+       '_tag' => 'table',
       );
 
-    # by inspecting the output of $tree->dump, I saw that certain parts of the
-    # tree had certain absolute addresses from the root of the tree.
-    # I had planned a neat API allowing one to access various aspects of the
-    # Game of the Day, but for now, I just want the chessgame!
-    my %address = 
-      (
-       'date' => '0.1.2.0.0.0.0.0.0.0.0.0.0.0.2.0',
-       'game_url' => '0.1.2.0.0.0.0.0.0.0.0.1.0.0.0.1',
-       'white_player' => '0.1.2.0.0.0.0.0.0.0.0.1.0.0.0.1.0',
-       'black_player' => '0.1.2.0.0.0.0.0.0.0.0.1.0.0.0.1.4',
-       'game_title'   => '0.1.2.0.0.0.0.0.0.0.0.1.0.0.0.3.0',
-      );
+    my @tr = $table->look_down('_tag' => 'tr');
 
-    
-    # debugging output
-    while ( my ($k, $v) = each %address ) {
-#	warn " ** $k ** ", $/, $tb->address($v)->as_HTML, $/ 
-    }
+    my $god_tr = $tr[1];
+
+    my $a = $god_tr->look_down('_tag' => 'a');
 
     # lets get the URL of the game
-    my $game_url  = $tb->address($address{game_url})->attr('href');
+    my $game_url  = $a->attr('href');
     my ($game_id) = $game_url =~ m/(\d+)/;
 
     # let's get the game, faking out the web spider filter in the process:
@@ -145,7 +128,6 @@ sub game_of_day {
     open F, ">$outfile" or die "error opening $outfile for writing: $!";
     print F $pgn;
     close(F)
-    
 }
 
 sub puzzle_of_day {

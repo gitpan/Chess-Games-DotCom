@@ -26,7 +26,9 @@ logconfig(-driver =>
  );
 
 # Where the PGN files for game of day and puzzle of day are kept
-my $PGN_DIR = "$ENV{HOME}/chess";
+my $PGN_DIR = "."; # "$ENV{HOME}/chess";
+
+logdbg NOTICE, "PGN_DIR: $PGN_DIR";
 
 # Don't touch %sub :)
 
@@ -83,8 +85,18 @@ my $perm_file = $perm_file{$podgod};
 
 logdbg 'notice:4', "WRITING $perm_file FROM $tempfile";
 
-open T, $tempfile or die $!;
+open T, $tempfile or die "error: $!";
 
 my @T = <T>;
 
+-e $perm_file or create_perm_file($perm_file);
+
 Butler($perm_file, 'prepend', \@T) or logdie $!;
+
+sub create_perm_file  {
+
+  my $file = shift;
+  open F,  ">$file" or die $!;
+  close F;
+
+}
