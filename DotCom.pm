@@ -29,7 +29,7 @@ our @EXPORT = qw(
 	game_of_day puzzle_of_day
 );
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 our $home = 'http://www.chessgames.com';
 my  $tb   = HTML::TreeBuilder->new;
@@ -185,8 +185,17 @@ sub puzzle_of_day {
        '_tag' => 'table',
       );
 
- #   print $table->as_HTML;
 
+    my $winner = $table->look_down
+      (
+       '_tag' => '~text',
+       'text' => qr/to play and win/
+      );
+       
+
+    my $winner_content = $winner->attr('text');
+
+#    die $winner_content;
 
     my $A = $table->look_down
       (
@@ -204,7 +213,11 @@ sub puzzle_of_day {
     # let's get the game, faking out the web spider filter in the process:
     my $pgn       = _get pgn_url $game_id;
 
-    # let's save it to disk
+    $pgn =~ s!PlyCount.+\]!PlyCount \"$winner_content\"\]!;
+
+#    die $pgn;
+
+   # let's save it to disk
     open F, ">$outfile" or die "error opening $outfile for writing: $!";
     print F $pgn;
     close(F)
@@ -252,9 +265,21 @@ C<puzzle_of_day>
 
 =head1 NEW FEATURES
 
+=head2 in 0.08
+
+For C<puzzle_of_day()>,
+parsed out "$color to move and win" and stored in the PlyCount header of
+PGN so that I could see where the puzzle began.
+
+Too see an example of a log of auto-downloaded games, visit:
+
+http://princepawn.perlmonk.org/chess/pgn/montreux.html
+
 =head2 in 0.07
 
 Added a sample cron file for daily automatic retrieval of puzzle of day.
+
+Added Log::Agent logging to sample retrieval script
 
 =head2 in 0.06
 
